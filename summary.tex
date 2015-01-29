@@ -1,0 +1,83 @@
+\documentclass{anstrans}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\title{Dynamic Resource Exchange Performance in Cyclus}
+\author{Matthew J.~Gidden, Paul P. H.~Wilson}
+
+\institute{
+University of Wisconsin, Madison WI
+}
+
+\email{gidden@wisc.edu}
+
+%%%% packages and definitions (optional)
+\usepackage{graphicx} % allows inclusion of graphics
+\usepackage{booktabs} % nice rules (thick lines) for tables
+\usepackage{microtype} % improves typography for PDF
+
+\newcommand{\Cyclus}{\textsc{Cyclus}}
+
+\begin{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Introduction}
+Nuclear fuel cycle simulation (FCS) is a field which seeks to model the
+facilities and material flows required to produce nuclear power. Simulations
+normally model a time span decades, or even centuries. Furthermore, myriad
+decisions exist within a given fuel cycle simulation, such as the deployment
+timing of facility types and deciding how material transfers should be executed
+at a given time step. Accordingly, tradeoffs exist between the features provided
+by a simulator and the performance of the simulator.
+
+Historically, the most popular methodology used to model nuclear fuel cycles has
+been system dynamics \cite{moisseytsev_dymond_2001, durpel_daness_2003,
+  yacout_vision_2006, busquim_e_silva_system_2008}. In general, system dyanmics
+has been found to be difficult to use when modeling complex, physics-dependent
+supply chains. Attempts at modeling different fuel cycles have required altering
+the underlying simulation engine \cite{guerin_impact_2009}. It is typically
+difficult to add \textit{in situ} decision making, i.e., allowing a simulator to
+make deployment or routing decisions dynamically, given its current
+state. DANESS is the only simulator that claims any such capability in the
+current literature \cite{van_den_durpel_daness_2009}. Finally, modeling regional
+and institutional effects, i.e., allowing modeled relationships bewteen
+management entities to determine material flow and deployment decisions, is a
+feature absent from most simulators. 
+
+The \Cyclus{} FCS \cite{cyclus2014} was designed to more easily model a variety
+of fuel cycles. It uses an agent-based modeling paradigm in order to encapsulate
+the difficulty of designing new agent archetypes. Archetypes define
+parameterized agent logic and behavior, and can therefore be reused within and
+between simulations. The core agent-interaction model in \Cyclus{} is the
+Dynamic Resource Exchange (DRE) \cite{gidden_agent-based_2013,
+  gidden_agent-based_2014}. The DRE, recomputed at each time step, polls the
+supply and demand of commodities in the simulation and then determines the
+trades to be executed between agents. Coupling the DRE with the \Cyclus{}
+Region-Institution-Facility hierarchy model as well as the
+archetype-prototype-agent model, highly dynamic, easily adjustable fuel cycles
+can be modeled, addressing many of the issues developers and users have found
+with system-dynamics-based models. However, \Cyclus{} must both be featureful
+and performant. This paper provides a first-look at how the DRE model scales
+with problem size by generating and solving a large number of
+exchanges. Different solvers are analyzed including a \Cyclus{}-aware greedy
+heuristic in addition to COIN-OR's LP and MILP solvers \cite{coinclp, coincbc}.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Methodology}
+Method
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Results and Analysis}
+Results
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Conclusions}
+Conclusions
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Acknowledgments}
+Acks
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\bibliographystyle{ans}
+\bibliography{bibliography}
+\end{document}
+
