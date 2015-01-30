@@ -135,12 +135,12 @@ back-end exchange, reprocessing and storage facilities exchange material with
 reactors. In either case, facilities that are \text{not} reactors are referred
 to as \textit{support} facilities, as they support the reactors which generate
 power. In the front-end exchange model, a single type of supporting facility
-exists for each fuel type, e.g., an enrichment facilit for UOX, a thermal
+exists for each fuel type, e.g., an enrichment facility for UOX, a thermal
 reprocessing plant for TMOX, etc. In the back-end exchange model, a similar
-supporting facility distribution is used, except a storage facility type,
-capable of storing any commodity is added.
+supporting facility assignment is used, except a storage facility type, capable
+of storing any commodity is added.
 
-For both reactors and support facilities in both exchange species, exchange
+For reactors and support facilities in both exchange species, exchange
 constructs, such as preferences and constraint coefficients, must be
 generated. Constraint coefficients are a function of resource quality, for which
 a proxy must be assigned. Accordingly, each reactor is modeled using an
@@ -186,6 +186,18 @@ None, Coarse, or Fine.
 %% \end{tabularx}
 %% \end{table}
 
+Given a set of parameters, an exchange instance is generated and persisted in a
+database. The generated exchange exists in the \textit{exchange layer} of the
+DRE, as shown in Figure \ref{fig:dre_time}. Because the greedy heuristic is
+knowledgeable of \Cyclus, it uses solution pathway $1$ shown in the figure. The
+COIN solvers must have the \Cyclus{} exchange structure formulated into a
+mathematical program, described previously in \cite{gidden_agent-based_2013},
+and thus must take the second solver pathway, through the formulation
+layer. Figure \ref{fig:dre_time} also notes the time points measured during
+execution in order to compare solution times between solvers and different
+exchange instances, i.e., for each solver and exchange instance, execution time
+is measured as $t_f - t_i$.
+
 \begin{figure*}
   \begin{center}
     \includegraphics[width=2\columnwidth]{exchange_xlation_timing.pdf}
@@ -199,26 +211,15 @@ None, Coarse, or Fine.
   \end{center}
 \end{figure*}
 
-Given a set of parameters, an exchange instance is generated and persisted in a
-database. The generated exchange exists in the \textit{exchange layer} of the
-DRE, as shown in Figure \ref{fig:dre_time}. Because the greedy heuristic is
-knowledgeable of \Cyclus, it uses solution pathway $1$ shown in the figure. The
-COIN solvers must have the \Cyclus exchange structure formulated into a
-mathematical program, described previously in \ref{gidden_agent-based_2013}, and
-thus must take the second solver pathway, through the formulation layer. Figure
-\ref{fig:dre_time} also notes the time points measured during execution in order
-to compare solution times between solvers and different exchange instances,
-i.e., for each solver and exchange instance, execution time is measured as $t_f
-- t_i$.
-
 In order to explore the large number of possible exchange instances, a
 sophisticated instance generation and solving framework is needed. Accordingly,
 a new software package called Cyclopts (\underline{Cycl}us
-\underline{Opt}imization \underline{S}tudies) was developed. Cyclopts provides a
-general framework for sampling a parameter space, defining problem instances for
-a given point in parameter space, and solving a problem instance under a variety
-of conditions. Cyclopts leverages an HTCondor-aware High Throughput Computing
-(HTC) framework at UW-Madison in order to efficiently run exchange instances. 
+\underline{Opt}imization \underline{S}tudies) has been developed. Cyclopts
+provides a general framework for sampling a parameter space, defining problem
+instances for a given point in parameter space, and solving a problem instance
+under a variety of conditions. Cyclopts leverages an HTCondor-aware High
+Throughput Computing (HTC) framework at UW-Madison in order to efficiently run
+exchange instances.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
