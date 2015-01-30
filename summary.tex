@@ -26,38 +26,38 @@ University of Wisconsin, Madison WI
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction}
-Nuclear fuel cycle simulation (FCS) is a field which seeks to model the
-facilities and material flows required to produce nuclear power. Simulations
-normally model a time span decades, or even centuries. Furthermore, myriad
-decisions exist within a given fuel cycle simulation, such as the deployment
-timing of facility types and deciding how material transfers should be executed
-at a given time step. Accordingly, tradeoffs exist between the features provided
-by a simulator and the performance of the simulator.
 
-The \Cyclus{} FCS \cite{cyclus2014} was designed to more easily model a variety
-of fuel cycles. It uses an agent-based modeling paradigm in order to encapsulate
+Nuclear fuel cycle simulation is a field which seeks to model the facilities and
+material flows required to produce nuclear power. Simulations normally model a
+time span decades, or even centuries. Myriad decisions exist within a given fuel
+cycle simulation, such as the deployment timing of facility types and determining
+how material transfers should be executed at a given time step. Accordingly,
+trade-offs exist between the features provided by a simulator and the performance
+of the simulator.
+
+The \Cyclus{} simulator \cite{cyclus2014} was designed to more easily model a
+variety of fuel cycles. It uses an agent-based modeling paradigm, encapsulating
 the difficulty of designing new agent archetypes. Archetypes define
-parameterized agent logic and behavior, and can therefore be reused within and
+parameterized agent logic and behavior and can therefore be reused within and
 between simulations. The core agent-interaction model in \Cyclus{} is the
 Dynamic Resource Exchange (DRE) \cite{gidden_agent-based_2013,
   gidden_agent-based_2014}. The DRE, recomputed at each time step, polls the
 supply and demand of commodities in the simulation and then determines the
-trades to be executed between agents. Coupling the DRE with the \Cyclus{}
-Region-Institution-Facility hierarchy model as well as the
-archetype-prototype-agent model, highly dynamic, easily adjustable fuel cycles
-can be modeled, addressing many of the issues developers and users have found
-with previous models. However, \Cyclus{} must both be featureful and
-performant. This paper provides a first-look at how the DRE model, also called
-the Nuclear Fuel Cycle Transportation Problem (NFCTP), scales with problem size
-by generating and solving a large number of exchanges. Different solvers are
-analyzed including a \Cyclus{}-aware greedy heuristic in addition to COIN-OR's
-LP and MILP solvers \cite{coinclp, coincbc}.
+trades to be executed between agents. Highly dynamic, easily adjustable fuel
+cycles can be modeled by coupling the DRE concept with the \Cyclus{}
+Region-Institution-Facility hierarchy and archetype-prototype-agent models,
+addressing many of the issues developers and users have found with previous
+models. However, \Cyclus{} must both be featureful and performant. This work
+provides a first-look at how the DRE supply-demand model scales with problem
+size by generating and solving a large number of exchanges. Different solvers
+are analyzed including a \Cyclus{}-aware greedy heuristic in addition to
+COIN-OR's LP and MILP solvers \cite{coinclp, coincbc}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Methodology}
 
 Instances of resource exchanges are required to analyze the effects and
-performance of the NFCTP formulation and its solvers. In the absence of large
+performance of the DRE and its solvers. In the absence of large
 Cyclus simulations with interesting facility and relationship models, instances
 must be generated given some set of rules and parameters. Two distinct
 \textit{species} of exchanges are generated, those related to the \textit{front
@@ -192,9 +192,11 @@ None, Coarse, or Fine.
     \includegraphics[width=2\columnwidth]{exchange_xlation_timing.pdf}
     \caption[]{
       \label{fig:dre_time}
-      The control flow of the DRE execution and time points for comparing 
-      different solutions. The DRE workflow is described more fully in 
-      \cite{gidden_agent-based_2013, gidden_agent-based_2014}. }
+      The control flow of the DRE execution and time points for comparing
+      different solutions. The greedy heuristic takes the pathway labeled $1$,
+      while CLP and CBC solvers take the second pathway. The DRE workflow is
+      described more fully in \cite{gidden_agent-based_2013,
+        gidden_agent-based_2014}. }
   \end{center}
 \end{figure*}
 
@@ -329,11 +331,10 @@ authors thank the NEUP for its generous support.
 \includegraphics[width=.25\columnwidth]{neup_logo_large.jpg}
 \end{center}
 
-The authors would also like to thank Dr. Anthony M. Scopatz, whose advice in the
-development of Cyclopts has proved invaluable.
+The authors would like to especially thank Dr. Anthony M. Scopatz, whose advice
+contributed greatly in the development of Cyclopts.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \bibliographystyle{ans}
 \bibliography{bibliography}
 \end{document}
-
