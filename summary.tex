@@ -57,16 +57,16 @@ COIN-OR's LP and MILP solvers \cite{coinclp, coincbc}.
 \section{Methodology}
 
 Instances of resource exchanges are required to analyze the effects and
-performance of the DRE and its solvers. In the absence of large
-Cyclus simulations with interesting facility and relationship models, instances
-must be generated given some set of rules and parameters. Two distinct
-\textit{species} of exchanges are generated, those related to the \textit{front
-  end} of the nuclear fuel cycle and those related to the \textit{back end} of
-the nuclear fuel cycle. For each species, commodities, reactors, and supporting
-facilities must be generated in addition to exchange-related parameters, such as
-the trade preferences.
+performance of the DRE and its solvers. In the absence of large Cyclus
+simulations with interesting facility and relationship models, instances must be
+generated given some set of rules and parameters. Two distinct \textit{species}
+of exchanges are generated, those related to the \textit{front end} of the
+nuclear fuel cycle and those related to the \textit{back end} of the nuclear
+fuel cycle. For each species, commodities, reactors, and supporting facilities
+must be generated in addition to exchange-related parameters, such as the trade
+preferences.
 
-Three types of fuel cycles can be generated: a once-through fuel cycle, labeled
+Three types of fuel cycles are generated: a once-through fuel cycle, labeled
 OT; a plutonium-recycle fuel cycle, labeled MOX; and a plutonium and
 thorium-recycle fuel cycle, labeled MOX-ThOX. As fuel cycles increase in
 complexity, the number of commodities that exist increases, as shown in Table
@@ -98,16 +98,15 @@ estimate the amount of fuel exchanged by reactors each time step. Accordingly,
 thermal reactors are simplified models of AP-1000 reactors, and fast reactors
 are simplified models of BN-600 reactors. Reactors operate in a batch mode,
 where each batch is approximately one quarter of the reactor core, an assumption
-which similar to other analyses \cite{rineiski2011reactivity}. Each reactor in
-the exchange is either offering or requesting a batch of fuel. Reactors may be
+used by other analyses \cite{rineiski2011reactivity}. Each reactor in the
+exchange is either offering or requesting a batch of fuel. Reactors may be
 fueled by different fuel types, i.e., fuel commodities. A mapping of reactors to
 acceptable commodities is provided in Table \ref{tbl:rx_to_commods}. Note that
 there is still a preference distribution associated with each reactor-commodity
 pair as well as constraint coefficient effects; therefore, while a reactor
-\textit{can} consume a fuel commodity, it may only do so in the absence of any
-other commodity availability. It is assumed that in the presence of an
-undesirable but usuable fuel type, a reactor would rather utilize the
-undesirable fuel than realize the lost revenue from not producing power.
+\textit{can} consume a fuel commodity, it may do so only in the absence of any
+other commodity availability. It is assumed that a reactor would rather utilize
+an undesirable fuel type than realize the lost revenue from not producing power.
 
 \begin{table}[]
 \centering
