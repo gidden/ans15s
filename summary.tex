@@ -235,16 +235,15 @@ allow comparisons between solution times.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Results and Analysis}
 
-Initially, a scalability campaign was launched to study how the solvers perform
-as the size of exchange increases. All parameters for generating an exchange are
-a function of the number of reactors in the exchange, thus the number of
-reactors in the system is the natural choice for a scaling parameter. The number
-of reactors in the system was scaled from ten to five hundred. For each reactor
+A scalability campaign was launched to study how the solvers perform as the size
+of exchange increases. All species-specific parameters for generating an
+exchange are a function of the number of reactors in the exchange, thus the
+number of reactors in the system is the natural choice for a scaling
+parameter. A range of $[10, 500]$ was chosen for this analysis. For each reactor
 population value, exchanges were generated for all possible combinations of
-fundamental parameter values ($18$ total). Further, each generated exchange
-instance was solved with all three available solvers. Figure
-\ref{fig:greedy_size} provides an example of output from the scalability
-campaign.
+fundamental parameter values ($18$ total). Each generated exchange instance was
+solved with all three available solvers. Figure \ref{fig:greedy_size} provides
+an example of output from the scalability campaign.
 
 \begin{figure*}
   \begin{center}
@@ -258,33 +257,34 @@ campaign.
 \end{figure*}
 
 Both the CLP and greedy solvers were found to scale similarly. As shown in
-Figure \ref{greedy_size}, polynomial scaling ($\mathcal{O}(n^2)$) in the reactor
-population is observed. This is driven by the number of constraints in the
-resulting formulation, rather than the number of variables, for which linear
+Figure \ref{fig:greedy_size}, polynomial scaling ($\mathcal{O}(n^2)$) in the
+reactor population is observed. This is driven by the number of constraints in
+the resulting formulation, rather than the number of variables, for which linear
 scaling ($\mathcal{O}(n)$) was observed. Polynomial scaling of both the greedy
 and CLP solvers occurs regardless of fundamental parameter or exchange
-species. The CBC solver, however, perfoms sporadically, with many exchange
-instances remaining unconverged at an artificial $3$-hour time cap. This is not
-unexpected, as solving a MILP optimally is an NP-hard problem. Most exchanges
-consisting of $100$ (or less) reactors was found to converge well below the cap.
+species. The CBC solver, however, performs sporadically, with many exchange
+instances remaining unconverged at a $3$-hour time cap. This is not unexpected,
+as solving a MILP optimally is an NP-hard problem. Most exchanges consisting of
+$100$ (or less) reactors was found to converge well below the cap.
 
-Every exchange instance depends on both objective value coefficients and
-constraint coefficients, both of which are products of stochastic
-processes. Accordingly, an experimental campaign was launched to study the
-effects of stochasticity on the solution times and relative solution values
-between solvers. An exchange with $65$ reactors was chosen to be generated in
-order to acheive reasonable CBC solve times in most cases. Similar to the
-scalability campaign, all possible combinations of fundamental parameter values
-were investigated; $1,000$ were generated as a base line case study for each
-combination. Figure \ref{fig:cbc_stochastic} provides an example of output from
-the stochastic campaign.
+Every exchange instance depends on both objective value and constraint
+coefficients, both of which are products of stochastic processes. Accordingly,
+an experimental campaign was launched to study the effects of stochasticity on
+the solution times and relative solution values between solvers. An exchange
+with $65$ reactors was chosen to be generated in order to achieve reasonable CBC
+solve times in most cases. Similar to the scalability campaign, all possible
+combinations of fundamental parameter values were investigated; $1,000$ were
+generated as a base line case study for each combination. Figure
+\ref{fig:cbc_stochastic} provides an example of output from the stochastic
+campaign, graphing cumulative solution time values as the number of observations
+increases.
 
 \begin{figure*}
   \begin{center}
     \includegraphics[width=1.5\columnwidth]{1k_avg_front_time_fc1_solvercbc.pdf}
     \caption[]{
       \label{fig:cbc_stochastic}
-      Results for the size stochastic study for the CBC Solver modeling a
+      Timing results for the stochastic study for the CBC Solver modeling a
       front-end MOX fuel cycle with $65$ reactors. Rows have increasing \frx
       values and columns have increasing \floc values.  }
   \end{center}
