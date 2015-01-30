@@ -103,7 +103,11 @@ the exchange is either offering or requesting a batch of fuel. Reactors may be
 fueled by different fuel types, i.e., fuel commodities. A mapping of reactors to
 acceptable commodities is provided in Table \ref{tbl:rx_to_commods}. Note that
 there is still a preference distribution associated with each reactor-commodity
-pair as well as constraint coefficient effects.
+pair as well as constraint coefficient effects; therefore, while a reactor
+\textit{can} consume a fuel commodity, it may only do so in the absence of any
+other commodity availability. It is assumed that in the presence of an
+undesirable but usuable fuel type, a reactor would rather utilize the
+undesirable fuel than realize the lost revenue from not producing power.
 
 \begin{table}[]
 \centering
@@ -118,11 +122,11 @@ pair as well as constraint coefficient effects.
                       & FMOX       \\ \hline
 \multirow{4}{*}{FMOX}  & UOX         \\  
                       & TMOX        \\ 
-                      & TMOX        \\  
+                      & FMOX        \\  
                       & FThOX        \\ \hline 
 \multirow{4}{*}{FThOX} & UOX         \\  
                      & TMOX        \\ 
-                      & TMOX        \\  
+                      & FMOX        \\  
                       & FThOX        \\ \hline 
 \end{tabular}
 \end{table}
@@ -151,36 +155,37 @@ proxy can provide additional weight to preference values.
 
 Exchange generation is parameterized and thus depends on a parameter
 vector. While each species has specific parameters, both species share some
-fundamental parameters, namely: which fuel cycle is being generated, whether
-reactors are modeled using a single batch or a collection of assemblies, and to
-what degree location is used in determining preference coefficients. Because
-each parameter deals with a notion of simulation \textit{fidelity}, they are
-denoted as $f_{x}$ and summarized in Table \ref{tbl:global_params}.
+fundamental parameters, namely: \ffc, which fuel cycle is being generated; \frx,
+whether reactors are modeled using a single batch or a collection of assemblies;
+and \floc, to what degree location is used in determining preference
+coefficients. \ffc may take on values of OT, MOX, or THOX, as described
+above. \frx may take on values of Batch or Assembly. \floc may take on values of
+None, Coarse, or Fine.
 
-\begin{table}[]
-\centering
-\caption{Parameter Description Summary for Species-Independent Parameters.}
-\label{tbl:global_params}
-\begin{tabularx}{\columnwidth}{|c|X|c|} % line wraps second column if too long
-\hline
-Parameter    & 
-Description & 
-Values
-\\ \hline
-\ffc      &
-Which fuel cycle is being modeled &
-OT, MOX, THOX
-\\ \hline
-\frx    &
-Whether individual assemblies are modeled or whole batches are modeled &
-Batch, Assembly  
-\\ \hline
-\floc     &
-To what degree is facility location included in objective coefficients &
-None, Coarse, Fine
-\\ \hline
-\end{tabularx}
-\end{table}
+%% \begin{table}[]
+%% \centering
+%% \caption{Parameter Description Summary for Species-Independent Parameters.}
+%% \label{tbl:global_params}
+%% \begin{tabularx}{\columnwidth}{|c|X|c|} % line wraps second column if too long
+%% \hline
+%% Parameter    & 
+%% Description & 
+%% Values
+%% \\ \hline
+%% \ffc      &
+%% Which fuel cycle is being modeled &
+%% OT, MOX, THOX
+%% \\ \hline
+%% \frx    &
+%% Whether individual assemblies are modeled or whole batches are modeled &
+%% Batch, Assembly  
+%% \\ \hline
+%% \floc     &
+%% To what degree is facility location included in objective coefficients &
+%% None, Coarse, Fine
+%% \\ \hline
+%% \end{tabularx}
+%% \end{table}
 
 \begin{figure*}
   \begin{center}
@@ -250,14 +255,27 @@ campaign.
   \end{center}
 \end{figure*}
 
+Both the CLP and greedy solvers were found to scale similarly. As shown in
+Figure \ref{greedy_size}, polynomial scaling ($\mathcal{O}(n^2)$) in the reactor
+population is observed. This is driven by the number of constraints in the
+resulting formulation, rather than the number of variables, for which linear
+scaling ($\mathcal{O}(n)$) was observed. Polynomial scaling of both the greedy
+and CLP solvers occurs regardless of fundamental parameter or exchange
+species. The CBC solver, however, perfoms sporadically, with many exchange
+instances remaining unconverged at an artificial $3$-hour time cap. This is not
+unexpected, as solving a MILP optimally is an NP-hard problem. Most exchanges
+consisting of $100$ (or less) reactors was found to converge well below the cap.
+
 Every exchange instance depends on both objective value coefficients and
 constraint coefficients, both of which are products of stochastic
 processes. Accordingly, an experimental campaign was launched to study the
 effects of stochasticity on the solution times and relative solution values
-between solvers. Similar to the scalability campaign, all possible combinations
-of fundamental parameter values were investigated; $1,000$ were generated as a
-base line case study for each combination. Figure \ref{fig:cbc_stochastic}
-provides an example of output from the stochastic campaign.
+between solvers. An exchange with $65$ reactors was chosen to be generated in
+order to acheive reasonable CBC solve times in most cases. Similar to the
+scalability campaign, all possible combinations of fundamental parameter values
+were investigated; $1,000$ were generated as a base line case study for each
+combination. Figure \ref{fig:cbc_stochastic} provides an example of output from
+the stochastic campaign.
 
 \begin{figure*}
   \begin{center}
@@ -269,11 +287,34 @@ provides an example of output from the stochastic campaign.
   \end{center}
 \end{figure*}
 
+As can be seen in Figure \ref{fig:cbc_stochastic}, the CBC solver is sporadic
+even for relatively small exchange sizes: some instances are solved very
+quickly, while others can occasionally take a full allotted time before
+returning. Interestingly, this behavior was seen much more frequently in
+batch-based exchanges rather than assembly-based exchanges, likely due a more
+constrained feasible solution space. Stochastic effects were also observed in
+the solution times for the greedy heuristic and CLP solvers. However, average
+solution times were found to converge after \textasciitilde$100$-$200$ instances
+for both species of exchanges and all combinations of fundamental parameters.
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Conclusions}
 
+A first-of-a-kind analysis of the dynamic solution of suppy and demand in a
+nuclear fuel cycle is presented. A large number of exchanges are generated and
+solved with a \Cyclus-aware greedy heuristic, the CLP solver, and the CBC
+solver. The greedy heuristic is shown to scale well even for very large problem
+sizes, even when modeling up to $500$ reactors (on the order of the current
+world-wide reactor population) trading individual assemblies. The CLP solver
+also performs well at large problem scales. The CBC solver, while achieving the
+true optimal solution in many cases, performs sporadically. Such a result is not
+surprising, especially for highly-constrained optimizaiton problems. Its use,
+therefore, is suggested for initial exploratory studies before embarking on
+full-fledged analytical campaigns. Most users will likely find the greedy
+heuristic to be acceptable, as it provides a feasible solution and enables the
+powerful features of the DRE.
 
-Conclusions
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Acknowledgments}
