@@ -29,11 +29,11 @@ University of Wisconsin, Madison WI
 
 Nuclear fuel cycle simulation is a field which seeks to model the facilities and
 material flows required to produce nuclear power. Simulations normally model a
-time span decades, or even centuries. Myriad decisions exist within a given fuel
-cycle simulation, such as the deployment timing of facility types and determining
-how material transfers should be executed at a given time step. Accordingly,
-trade-offs exist between the features provided by a simulator and the performance
-of the simulator.
+time span of decades, or even centuries. Myriad decisions exist within a given
+fuel cycle simulation, such as the deployment timing of facility types and
+determining how material transfers should be executed at a given time
+step. Accordingly, trade-offs exist between the features provided by a simulator
+and the performance of the simulator.
 
 The \Cyclus{} simulator \cite{cyclus2014} was designed to more easily model a
 variety of fuel cycles. It uses an agent-based modeling paradigm, encapsulating
@@ -58,13 +58,13 @@ COIN-OR's LP and MILP solvers \cite{coinclp, coincbc}.
 
 Instances of resource exchanges are required to analyze the effects and
 performance of the DRE and its solvers. In the absence of large Cyclus
-simulations with interesting facility and relationship models, instances must be
-generated given some set of rules and parameters. Two distinct \textit{species}
-of exchanges are generated, those related to the \textit{front end} of the
-nuclear fuel cycle and those related to the \textit{back end} of the nuclear
-fuel cycle. For each species, commodities, reactors, and supporting facilities
-must be generated in addition to exchange-related parameters, such as the trade
-preferences.
+simulations with interesting facility and relationship models, relevant
+instances must be generated outside of Cyclus given some set of rules and
+parameters. Two distinct \textit{species} of exchanges are generated, those
+related to the \textit{front end} of the nuclear fuel cycle and those related to
+the \textit{back end} of the nuclear fuel cycle. For each species, commodities,
+reactors, and supporting facilities must be generated in addition to
+exchange-related parameters, such as the trade preferences.
 
 Three types of fuel cycles are generated: a once-through fuel cycle, labeled
 OT; a plutonium-recycle fuel cycle, labeled MOX; and a plutonium and
