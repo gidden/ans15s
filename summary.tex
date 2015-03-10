@@ -13,14 +13,15 @@ University of Wisconsin, Madison WI
 \usepackage{graphicx} % allows inclusion of graphics
 \usepackage{booktabs} % nice rules (thick lines) for tables
 \usepackage{microtype} % improves typography for PDF
-
+\usepackage{hyperref}
 \usepackage{multirow} % combining rows in tables
 \usepackage{tabularx} % for tables with line breaks
+\usepackage{xspace}
 
 \newcommand{\Cyclus}{\textsc{Cyclus}}
-\newcommand{\ffc}{$f_{\text{fc}}$}
-\newcommand{\frx}{$f_{\text{rx}}$}
-\newcommand{\floc}{$f_{\text{loc}}$}
+\newcommand{\ffc}{$f_{\text{fc}}$\xspace}
+\newcommand{\frx}{$f_{\text{rx}}$\xspace}
+\newcommand{\floc}{$f_{\text{loc}}$\xspace}
 
 \begin{document}
 
@@ -60,11 +61,12 @@ Instances of resource exchanges are required to analyze the effects and
 performance of the DRE and its solvers. In the absence of large Cyclus
 simulations with interesting facility and relationship models, relevant
 instances must be generated outside of Cyclus given some set of rules and
-parameters. Two distinct \textit{species} of exchanges are generated, those
-related to the \textit{front end} of the nuclear fuel cycle and those related to
-the \textit{back end} of the nuclear fuel cycle. For each species, commodities,
-reactors, and supporting facilities must be generated in addition to
-exchange-related parameters, such as the trade preferences.
+parameters. Instances are then translated into appropriate Cyclus data
+structures and solved. Two distinct \textit{species} of exchanges are generated,
+those related to the \textit{front end} of the nuclear fuel cycle and those
+related to the \textit{back end} of the nuclear fuel cycle. For each species,
+commodities, reactors, and supporting facilities must be generated in addition
+to exchange-related parameters, such as the trade preferences.
 
 Three types of fuel cycles are generated: a once-through fuel cycle, labeled
 OT; a plutonium-recycle fuel cycle, labeled MOX; and a plutonium and
@@ -77,7 +79,8 @@ Plutonium Oxide for Fast Reactors (FMOX), Thorium Oxide for Fast Reactors
 
 \begin{table}[]
 \centering
-\caption{A mapping between fuel cycles to the commodities that exist in each one.}
+\caption{A mapping between fuel cycles to the commodities that exist in each
+  one.}
 \label{tbl:fc_to_commods}
 \begin{tabular}{|c|c|}
 \hline
@@ -152,14 +155,13 @@ per-commodity to requesters in both exchange species. In order to differentiate
 between preferences, facilities are assigned a location proxy. The location
 proxy can provide additional weight to preference values.
 
-Exchange generation is parameterized and thus depends on a parameter
-vector. While each species has specific parameters, both species share some
-fundamental parameters, namely: \ffc, which fuel cycle is being generated; \frx,
-whether reactors are modeled using a single batch or a collection of assemblies;
-and \floc, to what degree location is used in determining preference
-coefficients. \ffc may take on values of OT, MOX, or THOX, as described
-above. \frx may take on values of Batch or Assembly. \floc may take on values of
-None, Coarse, or Fine.
+Exchange generation depends on a parameter vector. While each species has
+specific parameters, both species share some fundamental parameters, namely:
+\ffc, which fuel cycle is being generated; \frx, whether reactors are modeled
+using a single batch or a collection of assemblies; and \floc, to what degree
+location is used in determining preference coefficients. \ffc may take on values
+of OT, MOX, or THOX, as described above. \frx may take on values of Batch or
+Assembly. \floc may take on values of None, Coarse, or Fine.
 
 %% \begin{table}[]
 %% \centering
@@ -214,23 +216,22 @@ is measured as $t_f - t_i$.
 In order to explore the large number of possible exchange instances, a
 sophisticated instance generation and solving framework is needed. Accordingly,
 a new software package called Cyclopts (\underline{Cycl}us
-\underline{Opt}imization \underline{S}tudies) has been developed. Cyclopts
-provides a general framework for sampling a parameter space, defining problem
-instances for a given point in parameter space, and solving a problem instance
-under a variety of conditions. Cyclopts leverages an HTCondor-aware High
-Throughput Computing (HTC) framework at UW-Madison in order to efficiently run
-exchange instances.
+\underline{Opt}imization \underline{S}tudies) \cite{cyclopts} has been
+developed. Cyclopts provides a general framework for sampling a parameter space,
+defining problem instances for a given point in parameter space, and solving a
+problem instance under a variety of conditions. Cyclopts leverages an
+HTCondor-aware High Throughput Computing (HTC) framework at UW-Madison in order
+to efficiently run exchange instances.
 
 An experiment consists of a set of resource-exchange graph instances executed
 with a collection of configured solvers. When a solution is found, the solution
 (i.e., the flow vector), the time required to reach the solution, and the
 objective value (i.e., the dot-product of cost and flow vectors) are
-recorded. Six execution nodes on UW-Madison Advanced Computing Initiative (ACI)
-HTCondor system form the homogeneous environment used to conduct the experiments
-herein described. Each execute node is comprised of an 2.90 GHz eight-core,
-sixteen-thread, Intel Xeon E5-2690 processor with 128 GB of RAM. Processor
-hyper-threading was disabled for the duration of the experimental campaign to
-allow comparisons between solution times.
+recorded. Six execution nodes on the UW-Madison HTC system form the
+homogeneous environment used to conduct the experiments herein described. Each
+execute node is comprised of a 2.90 GHz eight-core Intel Xeon E5-2690 processor
+with 128 GB of RAM. Processor hyper-threading was disabled for the duration of
+the experimental campaign to allow comparisons between solution times.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Results and Analysis}
@@ -242,37 +243,39 @@ number of reactors in the system is the natural choice for a scaling
 parameter. A range of $[10, 500]$ was chosen for this analysis. For each reactor
 population value, exchanges were generated for all possible combinations of
 fundamental parameter values ($18$ total). Each generated exchange instance was
-solved with all three available solvers. Figure \ref{fig:greedy_size} provides
-an example of output from the scalability campaign.
+solved with all three available solvers. 
+
+The greedy solver is shown to match its theoretical
+$\mathcal{O}(n\log{}\frac{n}{N})$ in the number of arcs, $n$, and number of
+request portfolios, $N$. This is promising, as most users are likely to use the
+greedy solver, at least initially. An example for a front-end fuel cycle is
+shown in Figure \ref{fig:greedy_size}. The CLP solver was found to be primarily
+$\mathcal{O}(n^2)$ in the number of constraints. Polynomial-like time for CLP
+solves are important, because such solves are used at each iteration of the CBC
+solver. Polynomial-like scaling of both the greedy and CLP solvers occurs
+regardless of fundamental parameter or exchange species. The CBC solver,
+however, performs sporadically, with many exchange instances remaining
+unconverged at a $3$-hour time cap. This is not unexpected, as solving a MILP
+optimally is an NP-hard problem. Most exchanges consisting of $100$ (or less)
+reactors was found to converge well below the cap.
 
 \begin{figure*}
   \begin{center}
-    \includegraphics[width=1.5\columnwidth]{base_back_n_rxtr_time_fc1_solvergreedy.pdf}
+    \includegraphics[width=1.5\columnwidth]{base_front_n_arcs_time_fc1_greedy.pdf}
     \caption[]{
       \label{fig:greedy_size}
       Results for the size scoping study for the greedy heuristic modeling a
-      back-end MOX fuel cycle. Rows have increasing \frx values and columns have
+      front-end MOX fuel cycle. Rows have increasing \frx values and columns have
       increasing \floc values.}
   \end{center}
 \end{figure*}
 
-Both the CLP and greedy solvers were found to scale similarly. As shown in
-Figure \ref{fig:greedy_size}, polynomial scaling ($\mathcal{O}(n^2)$) in the
-reactor population is observed. This is driven by the number of constraints in
-the resulting formulation, rather than the number of variables, for which linear
-scaling ($\mathcal{O}(n)$) was observed. Polynomial scaling of both the greedy
-and CLP solvers occurs regardless of fundamental parameter or exchange
-species. The CBC solver, however, performs sporadically, with many exchange
-instances remaining unconverged at a $3$-hour time cap. This is not unexpected,
-as solving a MILP optimally is an NP-hard problem. Most exchanges consisting of
-$100$ (or less) reactors was found to converge well below the cap.
-
-Every exchange instance depends on both objective value and constraint
-coefficients, both of which are products of stochastic processes. Accordingly,
-an experimental campaign was launched to study the effects of stochasticity on
-the solution times and relative solution values between solvers. An exchange
-with $65$ reactors was chosen to be generated in order to achieve reasonable CBC
-solve times in most cases. Similar to the scalability campaign, all possible
+Every exchange instance depends on both objective and constraint coefficients,
+both of which are products of stochastic processes. Accordingly, an experimental
+campaign was launched to study the effects of stochasticity on the solution
+times and relative solution values between solvers. An exchange with $65$
+reactors was chosen to be generated in order to achieve reasonable CBC solve
+times in most cases. Similar to the scalability campaign, all possible
 combinations of fundamental parameter values were investigated; $1,000$ were
 generated as a base line case study for each combination. Figure
 \ref{fig:cbc_stochastic} provides an example of output from the stochastic
@@ -281,24 +284,24 @@ increases.
 
 \begin{figure*}
   \begin{center}
-    \includegraphics[width=1.5\columnwidth]{1k_avg_front_time_fc1_solvercbc.pdf}
+    \includegraphics[width=1.2\columnwidth]{1k_avg_front_time_fc2_cbc.pdf}
     \caption[]{
       \label{fig:cbc_stochastic}
-      Timing results for the stochastic study for the CBC Solver modeling a
-      front-end MOX fuel cycle with $65$ reactors. Rows have increasing \frx
-      values and columns have increasing \floc values.  }
+      Average timing results for the stochastic study for the CBC Solver
+      modeling a front-end MOX/ThOX fuel cycle with $65$ reactors. Rows have
+      increasing \frx values and columns have increasing \floc values. Note the
+      larger magnitude for y-axis of the graph in the left pane. }
   \end{center}
 \end{figure*}
 
-As can be seen in Figure \ref{fig:cbc_stochastic}, the CBC solver is sporadic
-even for relatively small exchange sizes: some instances are solved very
-quickly, while others can occasionally take a full allotted time before
-returning. Interestingly, this behavior was seen much more frequently in
-batch-based exchanges rather than assembly-based exchanges, likely due a more
-constrained feasible solution space. Stochastic effects were also observed in
-the solution times for the greedy heuristic and CLP solvers. However, average
-solution times were found to converge after \textasciitilde$100$-$200$ instances
-for both species of exchanges and all combinations of fundamental parameters.
+As can be seen in Figure \ref{fig:cbc_stochastic}, sporadic CBC-solver behavior
+is observed even for identically-sized exchanges, especially for relatively
+small exchange sizes. Interestingly, this behavior was seen much more frequently
+in batch-based exchanges rather than assembly-based exchanges. Stochastic
+effects were also observed in the solution times for the greedy heuristic and
+CLP solvers to a smaller extent. However, average solution times were found to
+converge after \textasciitilde$100$-$200$ instances for both species of
+exchanges and all combinations of fundamental parameters.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
